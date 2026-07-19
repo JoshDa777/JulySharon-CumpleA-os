@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feliz Cumpleaños Julieth</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Press Start 2P', monospace;
+  background: linear-gradient(180deg, #fce4ec 0%, #f8bbd0 30%, #f48fb1 60%, #f06292 100%);
+  color: #5c3d4a;
+  overflow-x: hidden;
+  image-rendering: pixelated;
+}
+
+.screen { display: none; position: relative; z-index: 1; min-height: 100vh; width: 100%; }
+.screen.active { display: flex; }
+
+#screen-open {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fff0f5, #ffe4ec, #ffd9e6);
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 100;
+  transition: opacity 0.8s ease;
+}
+
+#screen-open.fade-out { opacity: 0; pointer-events: none; }
+
+.open-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.model-section {
+  flex: 1;
+  min-width: 280px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.model-container {
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 400px;
+  cursor: pointer;
+  position: relative;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(244,143,177,0.5), 0 0 60px rgba(244,143,177,0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
+  image-rendering: auto;
+  background: #ffe4ec;
+}
+
+.model-container:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 40px rgba(244,143,177,0.7), 0 0 80px rgba(244,143,177,0.3);
+}
+
+.model-container model-viewer {
+  width: 100%;
+  height: 100%;
+  --poster-color: transparent;
+  background: transparent !important;
+}
+
+.model-hint {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #f06292;
+  text-align: center;
+  animation: pulse-text 1.5s ease-in-out infinite;
+  text-shadow: 2px 2px 0 rgba(240,98,146,0.3);
+  line-height: 1.8;
+}
+
+.model-hint .arrow {
+  display: block;
+  font-size: 20px;
+  animation: bounce-arrow 1s ease-in-out infinite;
+}
+
+@keyframes bounce-arrow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+@keyframes pulse-text {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.gif-section {
+  flex: 1;
+  min-width: 280px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.speech-bubble-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.speech-bubble {
+  background: #fff;
+  border: 4px solid #f48fb1;
+  border-radius: 16px;
+  padding: 22px 28px;
+  margin-bottom: 18px;
+  position: relative;
+  max-width: 420px;
+  box-shadow: 8px 8px 0 rgba(244,143,177,0.3);
+}
+
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -18px;
+  left: 65%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-top: 18px solid #fff;
+  filter: drop-shadow(0 4px 0 #f48fb1);
+}
+
+.speech-bubble p {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #5c3d4a;
+  line-height: 2;
+  text-align: center;
+}
+
+.speech-bubble .highlight { color: #e91e63; font-weight: bold; }
+
+.gif-container {
+  width: 280px;
+  height: 280px;
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(244,143,177,0.4);
+  image-rendering: auto;
+}
+
+.gif-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pixel-hearts {
+  position: absolute;
+  font-size: 28px;
+  animation: float-heart 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.pixel-hearts:nth-child(1) { top: 5%; left: 5%; animation-delay: 0s; }
+.pixel-hearts:nth-child(2) { top: 10%; right: 8%; animation-delay: 0.5s; }
+.pixel-hearts:nth-child(3) { bottom: 8%; left: 10%; animation-delay: 1s; }
+.pixel-hearts:nth-child(4) { bottom: 5%; right: 5%; animation-delay: 1.5s; }
+.pixel-hearts:nth-child(5) { top: 50%; left: 2%; animation-delay: 2s; }
+.pixel-hearts:nth-child(6) { top: 30%; right: 3%; animation-delay: 2.5s; }
+
+@keyframes float-heart {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+  25% { transform: translateY(-15px) rotate(5deg); opacity: 1; }
+  50% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+  75% { transform: translateY(-10px) rotate(-5deg); opacity: 1; }
+}
+
+#screen-carta {
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  background: linear-gradient(180deg, #fce4ec 0%, #f8bbd0 30%, #f48fb1 60%, #f06292 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+.pixel-decoration {
+  position: fixed;
+  font-size: 36px;
+  pointer-events: none;
+  animation: float-decoration 4s ease-in-out infinite;
+  z-index: 1;
+  opacity: 0.7;
+}
+
+@keyframes float-decoration {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(3deg); }
+  66% { transform: translateY(5px) rotate(-3deg); }
+}
+
+.media-wrapper {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.media-item {
+  border: 4px solid #f48fb1;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(244,143,177,0.4);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  image-rendering: auto;
+  pointer-events: auto;
+  overflow: hidden;
+  background: #ffe4ec;
+  z-index: 2;
+}
+
+.media-item:hover {
+  transform: scale(1.15) rotate(3deg) !important;
+  box-shadow: 0 0 35px rgba(244,143,177,0.7);
+  z-index: 20;
+}
+
+.media-item img, .media-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.media-item video { background: #fce4ec; }
+
+.letter-container {
+  position: relative;
+  z-index: 30;
+  max-width: 700px;
+  width: 100%;
+  margin: 20px auto;
+  background: linear-gradient(135deg, #fff5f7, #ffe4ec, #ffd9e6);
+  border: 6px solid #f48fb1;
+  border-radius: 16px;
+  padding: 45px 40px;
+  box-shadow: 0 0 40px rgba(244,143,177,0.3), 0 0 80px rgba(244,143,177,0.1), inset 0 0 30px rgba(244,143,177,0.05);
+  image-rendering: pixelated;
+  background-color: #fff5f7;
+}
+
+.letter-container::before {
+  content: '';
+  position: absolute;
+  top: -10px; left: -10px;
+  right: -10px; bottom: -10px;
+  border: 3px dashed #f48fb1;
+  border-radius: 20px;
+  pointer-events: none;
+  animation: border-dash 3s linear infinite;
+}
+
+@keyframes border-dash {
+  0% { border-color: #f48fb1; }
+  25% { border-color: #f06292; }
+  50% { border-color: #ec407a; }
+  75% { border-color: #f06292; }
+  100% { border-color: #f48fb1; }
+}
+
+.letter-header {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.letter-header h1 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  color: #ec407a;
+  text-shadow: 3px 3px 0 #f48fb1, 6px 6px 0 rgba(0,0,0,0.05);
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.letter-header .subtitle {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: #a5707e;
+  line-height: 1.8;
+}
+
+.letter-header .emoji-row {
+  font-size: 32px;
+  margin: 12px 0;
+  letter-spacing: 10px;
+}
+
+.letter-body {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #5c3d4a;
+  line-height: 2.2;
+  min-height: 400px;
+  position: relative;
+}
+
+.letter-body .editable-area {
+  width: 100%;
+  max-height: 60vh;
+  border: 3px dashed #f48fb1;
+  border-radius: 12px;
+  padding: 22px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #5c3d4a;
+  line-height: 1.9;
+  background: rgba(255,255,255,0.6);
+  outline: none;
+  transition: border-color 0.3s, background 0.3s;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.letter-body .editable-area:focus {
+  border-color: #ec407a;
+  background: rgba(255,255,255,0.9);
+  box-shadow: inset 0 0 15px rgba(244,143,177,0.1);
+}
+
+.letter-body .editable-area:empty::before {
+  content: 'Escribe aqui tu carta para Juli...';
+  color: #cfa5b0;
+}
+
+.letter-footer {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 3px dashed #f48fb1;
+}
+
+.letter-footer p {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: #a5707e;
+  line-height: 1.8;
+}
+
+.pixel-corner {
+  position: fixed;
+  font-size: 44px;
+  z-index: 50;
+  pointer-events: none;
+  animation: spin-slow 10s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(244,143,177,0.3));
+}
+
+.pixel-corner.tl { top: 10px; left: 10px; }
+.pixel-corner.tr { top: 10px; right: 10px; }
+.pixel-corner.bl { bottom: 10px; left: 10px; }
+.pixel-corner.br { bottom: 10px; right: 10px; }
+
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.pixel-rain {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.pixel-rain span {
+  position: absolute;
+  font-size: 18px;
+  animation: rain-fall linear infinite;
+  opacity: 0.25;
+}
+
+@keyframes rain-fall {
+  0% { transform: translateY(-100px) rotate(0deg); opacity: 0.25; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
+.pixel-confetti {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+  z-index: 60;
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+.media-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer;
+  animation: fadeIn 0.3s ease;
+}
+
+.media-modal-content {
+  max-width: 90vw;
+  max-height: 90vh;
+  border: 5px solid #f48fb1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(244,143,177,0.5);
+}
+
+.media-modal-content img,
+.media-modal-content video {
+  max-width: 90vw;
+  max-height: 90vh;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .open-container { flex-direction: column; gap: 25px; }
+  .model-section, .gif-section { max-width: 100%; }
+  .model-container { max-width: 260px; }
+  .gif-container { width: 200px; height: 200px; }
+  .speech-bubble p { font-size: 8px; }
+  .letter-container { padding: 25px 18px; margin: 10px; }
+  .letter-header h1 { font-size: 12px; }
+  .letter-body .editable-area { font-size: 9px; min-height: 250px; }
+  .media-item { max-width: 100px; max-height: 100px; }
+  .pixel-corner { font-size: 28px; }
+  .pixel-decoration { font-size: 24px; }
+}
+
+.loading-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #fff0f5, #ffe4ec);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  transition: opacity 0.5s;
+}
+
+.loading-screen.hidden { opacity: 0; pointer-events: none; }
+
+.loading-content { text-align: center; }
+
+.loading-pixel {
+  font-size: 52px;
+  animation: loading-bounce 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes loading-bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-20px); }
+}
+
+.loading-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: #ec407a;
+  margin-top: 20px;
+  animation: pulse-text 1s ease-in-out infinite;
+}
+
+::-webkit-scrollbar { width: 14px; }
+::-webkit-scrollbar-track { background: #fce4ec; border: 2px solid #f48fb1; }
+::-webkit-scrollbar-thumb { background: #f48fb1; border: 2px solid #ec407a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #ec407a; }
+
+.pixel-star {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+</style>
+</head>
+<body>
+
+<div class="loading-screen" id="loading-screen">
+  <div class="loading-content">
+    <div class="loading-pixel">🎀</div>
+    <div class="loading-text">Cargando tu regalo...</div>
+  </div>
+</div>
+
+<div class="pixel-bg"></div>
+<div class="pixel-rain" id="pixel-rain"></div>
+
+<div class="pixel-corner tl">🎀</div>
+<div class="pixel-corner tr">🎁</div>
+<div class="pixel-corner bl">💝</div>
+<div class="pixel-corner br">🌟</div>
+
+<div class="screen active" id="screen-open">
+  <div class="pixel-hearts">💖</div>
+  <div class="pixel-hearts">💗</div>
+  <div class="pixel-hearts">💕</div>
+  <div class="pixel-hearts">❤️</div>
+  <div class="pixel-hearts">💓</div>
+  <div class="pixel-hearts">💘</div>
+  <div class="pixel-hearts">🦋</div>
+  <div class="pixel-hearts">🌸</div>
+
+  <div class="open-container">
+    <div class="model-section">
+      <div class="model-container" id="model-container" onclick="openGift()">
+        <model-viewer
+          id="tetoModel"
+          src="Abrir regalo/teto_pear.glb"
+          alt="Teto Pera - Presiona para abrir"
+          auto-rotate
+          camera-controls
+          interaction-prompt="none"
+          loading="eager"
+          reveal="auto"
+          shadow-intensity="1"
+          environment-image="neutral"
+          camera-orbit="45deg 75deg 30m"
+          min-camera-orbit="auto auto 20m"
+          max-camera-orbit="auto auto 50m">
+        </model-viewer>
+      </div>
+      <div class="model-hint">
+        <span class="arrow">👇</span>
+        ¡Presiona a Teto Pera<br>para abrir tu regalo!
+      </div>
+    </div>
+
+    <div class="gif-section">
+      <div class="speech-bubble-wrapper">
+        <div class="speech-bubble">
+          <p>
+            🎀 ¡Presiona a <span class="highlight">Teto Pera</span>! 🎀<br>
+            <br>
+            para abrir tu regalito<br>
+            <span class="highlight">Juli</span> 🎂💕
+          </p>
+        </div>
+        <div class="gif-container">
+          <img src="Abrir regalo/airi-momoi.gif" alt="Airi Momoi" id="gift-gif">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-carta">
+  <div class="media-wrapper" id="media-wrapper"></div>
+
+  <div class="pixel-decoration" style="top: 3%; left: 3%;">🎂</div>
+  <div class="pixel-decoration" style="top: 3%; right: 5%; animation-delay: 0.5s;">🎉</div>
+  <div class="pixel-decoration" style="top: 12%; left: 1%; animation-delay: 1s;">🎊</div>
+  <div class="pixel-decoration" style="top: 12%; right: 2%; animation-delay: 1.5s;">✨</div>
+  <div class="pixel-decoration" style="top: 50%; left: 1%; animation-delay: 2s;">💖</div>
+  <div class="pixel-decoration" style="top: 50%; right: 1%; animation-delay: 2.5s;">🌟</div>
+  <div class="pixel-decoration" style="top: 88%; left: 3%; animation-delay: 0.3s;">🎈</div>
+  <div class="pixel-decoration" style="top: 88%; right: 3%; animation-delay: 0.8s;">🎀</div>
+  <div class="pixel-decoration" style="top: 95%; left: 5%; animation-delay: 1.3s;">💝</div>
+  <div class="pixel-decoration" style="top: 95%; right: 5%; animation-delay: 1.8s;">🎁</div>
+
+  <div class="letter-container">
+    <div class="letter-header">
+      <div class="emoji-row">🎂🎉🎊🎀💖</div>
+      <h1>🎵 ¡Feliz Cumpleaños<br>Juli! 🎵</h1>
+      <div class="subtitle">Para mi mapachita 🦝💕</div>
+      <div class="emoji-row">🌟✨💕💗💘</div>
+    </div>
+
+    <div class="letter-body">
+      <div class="editable-area" contenteditable="true" id="letter-content">Wenaaaaash :3
+Como esta mi personita favoritaaaaaaa
+Que me cuentash mi mapachita mientras tu lees esto yo estoy trasnochado tratando de hacerte tu regalito, hablo de mi yo del pasado, aprovecho que ahora estás dormidita mientras descansas amorcito, ay mi juli, te digo algo, últimamente e Estado viendo demasiadas fotos tuyas, bueno en realidad poquitas pq no teng muchas, pero me refiero a que las veo mucho, y sabes algo me puse a pensar y no quería hacer una simple carta, quería hacerte una super cartita para tu cumpleaños en la que trataré de decirte como mínimo 100 cosas que me encantan de ti, por si acaso incluyen cosas cochinas entonces no lo leas en voz alta XDDD, la verdad te estaría diciendo lo mucho que me encantas pero eso será después de decirte las 100 cosas que me gustan de ti, y si hay más, pues habrán más, después de eso te diré porque te amo tanto, y te vas a aguantar porque esto va de largo mi juli, así que ponte cómoda mi mapachita porque aquí re vas a quedar como mínimo 30 minutos o eso espero xd, bueño empezemos con las cosas que me encantan de ti
+
+1. Tus ojitos :3
+2. Tus colochitos
+3. Tu boquita delgadita
+4. Tus cejitas
+5. Tu narizita
+6. Tu frentecita
+7. Tu color chocolatito
+8. Tu carita
+9. Tus pestañas
+10. Tu cuellito
+11. La forma de tu cuerpecito
+12. Tu pansita
+13. Tu ombliguito
+14. Tu pechito
+15. Tus pechitos
+16. Tus manitas
+17. Tus deditos
+18. Tus brazos
+19. Tus pesitos
+20. Tus piernitas
+21. Tus muslitos
+22. Tu figura
+23. Tu empanadita
+24. Tu mirada
+25. Tu lenguita
+26. Tu carisma
+27. Tu reflexión
+28. Tu filosofía
+29. Tu parte burlona
+30. Tu parte posesiva
+31. Tu parte ti ermita
+32. Tu parte cariñosa
+33. Tu parte enojons
+34. Tus pucheros
+35. Por cierto tus cachetitos :3
+36. Tus enseñanzas
+37. Tus bromitas
+38. Tu sonrisa
+39. Tu carita de pena
+40. Tu carita de felicidad
+41. Tu carita con pucheros
+42. Tu carita con esa mirada de yo no fui
+43. Tu carita con cara de mapachita
+44. Tu carita con cara de mapachita
+45. Tu carita con cara aburrida
+46. Como me tratas con cariño
+47. Como me tratas con amor
+48. Como me tratas con pucheros
+49. Como buscas mi cariño
+50. Como llamas mi atención
+51. Como me dices mi perezoso
+52. Eres muy atenta
+53. Eres muy reflexiva
+54. Eres muy inteligente
+55. Eres muy explosiva
+56. Eres muy extrovertida
+57. Eres muy alegre
+58. Eres muy empática
+59. Eres muy burlona
+60. Eres muy chistosa
+61. Eres buena artista
+62. Eres buena programadora
+63. Eres buena psicóloga
+64. Eres buena jugadora de proyect sekai xd
+65. Tienes mucha voluntad
+66. Tienes mucha paciencia
+67. Me invitas a jugar :3
+68. Complaces mis fetiches
+69. Eres muy traviesha
+70. Eres bastante calenturienta e tus días
+71. Te preocupas por mi
+72. Haces cosas por mi
+73. Me apoyas
+74. Me motivas
+75. Me enseñas cosas nuevas
+76. Me haces reflexionar sobre mis errores
+77. Me regañas mucho xdd
+78. Compartes sueños conmigo
+79. Fantaseamos sobre nuestro futuro juntitos
+80. Nos burlamos de nosotros mismos
+81. Me quieres quitar las bolitas
+82. Me provocas de manera "ajá"
+83. Me mandas fotitos tuyas
+84. Me complaces mucho
+85. Me generas ternura con tus comentarios con tal de que te de cariño
+86. Por cierto olvidé decir q me gustan tus nal-
+87. Una ves ví tu espalda mientras te cambiabas y waos que cuerpazo
+88. Sigues siendo tu misma y eso me encanta
+89. No eres rencorosa
+90. Me perdonas a pesar de mis cagadas
+91. Para mi haz sido un ejemplo a seguir y te admiro mucho
+92. Ya me estoy quedando sin ideas pero amo la manera en la que tienes carisma mezclando tus problemas con chistes
+93. Amo tu tolerancia
+94. Me das apodos chistosos acorde a la situación
+95. Me escribes y me das tiempo aún cuando estas ocupada
+96. Me haces caer en cuenta de mis errores
+97. Me escuchas cuando dije algo malo
+98. Me escuchas en mis malos momentos
+99. Me regañabas por no hacer tareas xd
+100. Me pasas fotitos tuyas
+Bonus. Simplemente me encantas tu mi juli peshosha
+
+
+Y ahora te diré las razones por las que te amo
+
+Al inicio cuando nos conocimos eramos dos personas que solamente tenían en común la informática, y que al conocernos descubrimos que no teníamos nada en común, pero me sentí complementado porque lo que no tenía yo, lo tenias tu, disfrutamos y pasamos tiempo juntos y nos hicimos amigos, te empeze a amar como amiga porque me entendiste cuando pasaba por un mal momento, porque me acompañaste cuando me sentía solo, porque me hiciste disfrutar y reír aún en silencio cuando nadie lo hizo, fuiste la primera persona en darme mi feliz cumpleaños cuando llegó ese día, y cuando termine con quien era mi pareja lo entendiste y aunque te burlaste xd, sabía que podía contar contigo, se que pasó poco tiempo pero de amarte como mi mejor amiga te empeze a ver con otros ojos, y disfrutaba de cada llamada contigo aún siendo amigos, y fuiste la mejor amiguita que tuve nunca, me hiciste reír y antes de hacernos pareja hacíamos un drama porque sabíamos que nos gustábamos pero no hacíamos nada XD, intentamos jugar juntitos pero el steam no dio xd, luego hicimos un servidor de Minecraft para pasar tiempito juntitos y ahí fue cuando mi vida se tornó de todos los colores que existen y existirán por todas las emociones que me dabas, tuvimos un drama de un día y yo por la emoción te insistía
+Nos hicimos pareja en un punto que por nuestra diferencia de hora eran días distintos, y esa hora específicamente se volvió muy especial para mi, tanto que solo recordarlo me hace latir el corazón muy rapido y con mucha fuerza, estuve muy feliz mientras tu estavas sorprendida porque no sabías como sería de cariñoso, pasaban los días mientras disfrutábamos hablábamos de cagadas y nos dabamos amor hasta que llegó el primer mes y estuve feliz de porfin tener una excusa para darte aún más cariño, te hice una página web como esta y a los días terminamos con ganas de inseminación XD, pasaron cositas y no solo me enamoré de tu personalidad y de tu carita hermosa sino también de tu cuerpo y me termine hipnotizando de tus partes, disculpame por ser tan obsesionado y describirlo así, pasamos ratos de calentura y disfrutamos y yo estaba rojo por tus mensajes en los que describes como te la pasabas a toda madre xdd, pasaron los días y se nos pasó, nos seguimos tratando con cariñito, amor, novedades del día, cosas tristes, felices, algunas cuestionables para darnos desacuerdos y llegamos a nuestro segundo mes, en el que se me retrasó tu regalito y no pude hacer mucho, y también se te adelantó tu época y yo aprovechando del premio doble XDDD, el siguiente mes fue algo similar pero con un poco más de reflexiones y fotitos, y también empeze a planear varios regalitos para ti, y el regslo del tercer mes se unificación con este para hacerte un mini evento de amor de 17 días, hasta llegar a hoy amorcito, el día de tu cumpleaños, ya cumplirás 17 añitooooos yeiiiiiiih, felicidades mi amoooooor, te amo mucho, espero disfrutes, te den muchos regalitos, espero que tus amigos te feliciten, espero que tu estes tranquilita disfrutando de tu nuevo ciclo de vida de 17 añitos, ay mi juli como creces mi niña, ya eres mayor que yo :3 te amo muchito mi mapachita peshosha, ten mucha suerte y bendiciones el día de hoy amorcito, no sabes cuanto te amo, espero que estes feliz, que disfrutes, que te relajes y que sigas cumpliendo muchos muchos muchos más amorcito, te amo muchitoooooo
+
+Ay mi juli te amo tanto :3
+Te amo tanto que a veces me quedo pensando en lo afortunado que fui de encontrarte entre tantas personas.
+Te amo tanto que incluso cuando me corriges o me llamas la atención, termino admirándote más porque me enseñas sin hacerme sentir menos.
+Te amo tanto que una de mis cosas favoritas es verte feliz, incluso cuando yo no soy la razón de esa felicidad.
+Te amo tanto que me aprendí muchas de tus manías, tus expresiones y tus bromas sin siquiera proponérmelo.
+Te amo tanto que me encanta cuando me molestas porque sé que detrás de cada burla siempre hay mucho cariño.
+Te amo tanto que admiro la forma en que enfrentas las cosas difíciles sin dejar de ser tú misma.
+Te amo tanto que me gusta imaginar todos los recuerdos que todavía nos faltan por crear juntos.
+Te amo tanto que a veces me sorprendo pensando en ti cuando estoy haciendo cualquier cosa completamente aleatoria.
+Te amo tanto que me haces sentir acompañado incluso cuando estamos a kilómetros de distancia.
+Te amo tanto que me enamora tu forma de tratar a las personas, tu paciencia y tu forma de enseñar.
+Te amo tanto que sigo descubriendo cosas nuevas de ti que me hacen admirarte todavía más.
+Te amo tanto que me encanta escuchar tus opiniones aunque no siempre estemos de acuerdo.
+Te amo tanto que me haces sentir en nuestra casita incluso desde una pantalla.
+Te amo tanto que cada vez que veo uno de tus dibujos vuelvo a pensar en lo impresionante que eres.
+Te amo tanto que cuando pienso en mi futuro, es imposible no imaginarte formando parte de él.
+
+
+Feliz cumpleaños mi juli peshosha :3
+Te amo muchitoooooo, cuídate mucho, disfruta de tu cumple y ten mucha suerte
+Yeeeeeih 17 añitos
+Te amo muchitoooooo
+Ay mi mapachita me enamoras, cuídate amorcito
+Chauuu
+Te amo muchitoooooo
+Byeeeee
+:3
+      </div>
+    </div>
+
+    <div class="letter-footer">
+      <p>💝 Hecho con mucho amor y pixel art para ti 💝</p>
+      <p style="margin-top: 15px; font-size: 7px; color: #cfa5b0;">
+        🎮 Presiona cualquier foto/video para verlo más grande 🎮
+      </p>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+
+<script>
+const MEDIA_API = '/api/media';
+const MEDIA_WRAPPER = document.getElementById('media-wrapper');
+const LETTER_AREA = document.getElementById('letter-content');
+const MODEL_VIEWER = document.getElementById('tetoModel');
+
+function createPixelRain() {
+  const container = document.getElementById('pixel-rain');
+  const emojis = ['🎂','🎉','🎊','💖','💗','💕','❤️','💘','🌟','✨','🎀','🎁','🦝','🌈','⭐','💝','🌸','🦋','🍰','🧁'];
+  for (let i = 0; i < 40; i++) {
+    const span = document.createElement('span');
+    span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    span.style.left = Math.random() * 100 + '%';
+    span.style.fontSize = (14 + Math.random() * 22) + 'px';
+    span.style.animationDuration = (10 + Math.random() * 15) + 's';
+    span.style.animationDelay = (Math.random() * 20) + 's';
+    container.appendChild(span);
+  }
+}
+
+function createConfetti() {
+  const colors = ['#f48fb1','#f06292','#ec407a','#ffd700','#ffb74d','#81d4fa','#ce93d8','#fff'];
+  const emojis = ['🎉','🎊','💖','🌟','✨','🎀','💕','❤️','🌸','🦋'];
+  for (let i = 0; i < 60; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'pixel-confetti';
+    confetti.style.left = Math.random() * 100 + '%';
+    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.width = (4 + Math.random() * 10) + 'px';
+    confetti.style.height = (4 + Math.random() * 10) + 'px';
+    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+    confetti.style.animationDuration = (3 + Math.random() * 4) + 's';
+    confetti.style.animationDelay = (Math.random() * 3) + 's';
+    document.body.appendChild(confetti);
+    if (i % 3 === 0) {
+      const emojiConfetti = document.createElement('div');
+      emojiConfetti.className = 'pixel-confetti';
+      emojiConfetti.style.left = Math.random() * 100 + '%';
+      emojiConfetti.style.fontSize = (18 + Math.random() * 18) + 'px';
+      emojiConfetti.style.background = 'none';
+      emojiConfetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      emojiConfetti.style.animationDuration = (4 + Math.random() * 4) + 's';
+      emojiConfetti.style.animationDelay = Math.random() + 's';
+      document.body.appendChild(emojiConfetti);
+    }
+  }
+}
+
+async function loadMedia() {
+  try {
+    let mediaFiles = [];
+    try {
+      const response = await fetch('/api/media');
+      console.log('📡 /api/media status:', response.status);
+      if (response.ok) mediaFiles = await response.json();
+    } catch (e) {
+      console.log('⚠️ /api media fallo, probando media-list.json');
+    }
+    if (!Array.isArray(mediaFiles) || mediaFiles.length === 0) {
+      const fallback = await fetch('media-list.json');
+      if (fallback.ok) mediaFiles = await fallback.json();
+    }
+    console.log('📦 Medios cargados:', mediaFiles.length, mediaFiles);
+    
+    if (!Array.isArray(mediaFiles) || mediaFiles.length === 0) {
+      console.log('⚠️ No hay archivos multimedia');
+      return;
+    }
+    
+    const shuffled = [...mediaFiles].sort(() => Math.random() - 0.5);
+    const letter = document.querySelector('.letter-container');
+    const letterRect = letter.getBoundingClientRect();
+    const placedRects = [];
+    const SIZE = 90;
+    const MARGIN = 15;
+
+    function tryPlace(w, h) {
+      for (let i = 0; i < 400; i++) {
+        const side = Math.random() < 0.5 ? 'left' : 'right';
+        const top = MARGIN + Math.random() * (window.innerHeight - h - MARGIN * 2);
+        let left;
+        if (side === 'left') {
+          left = MARGIN + Math.random() * Math.max(0, letterRect.left - w - MARGIN * 2);
+        } else {
+          left = letterRect.right + MARGIN + Math.random() * Math.max(0, window.innerWidth - letterRect.right - w - MARGIN * 2);
+        }
+        const rect = { left, right: left + w, top, bottom: top + h };
+        const overlapsLetter = !(rect.right < letterRect.left - MARGIN || rect.left > letterRect.right + MARGIN || rect.bottom < letterRect.top - MARGIN || rect.top > letterRect.bottom + MARGIN);
+        const overlapsOther = placedRects.some(r => !(rect.right < r.left - MARGIN || rect.left > r.right + MARGIN || rect.bottom < r.top - MARGIN || rect.top > r.bottom + MARGIN));
+        if (!overlapsLetter && !overlapsOther) {
+          placedRects.push(rect);
+          return rect;
+        }
+      }
+      return null;
+    }
+
+    shuffled.forEach((media, idx) => {
+      setTimeout(() => {
+        const item = document.createElement('div');
+        item.className = 'media-item';
+        const w = SIZE + Math.random() * 40;
+        const h = SIZE + Math.random() * 40;
+        const rect = tryPlace(w, h);
+        if (!rect) return;
+        item.style.cssText = `position:fixed;left:${rect.left}px;top:${rect.top}px;width:${w}px;height:${h}px;transform:rotate(${Math.random()*16-8}deg);`;
+        const inner = document.createElement('div');
+        inner.style.cssText = 'width:100%;height:100%;overflow:hidden;';
+        
+        if (media.type === 'video') {
+          const v = document.createElement('video');
+          v.src = media.path;
+          v.loop = true; v.muted = true; v.playsInline = true; v.loading = 'lazy';
+          v.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+          inner.appendChild(v);
+          item.addEventListener('mouseenter', () => v.play());
+          item.addEventListener('mouseleave', () => v.pause());
+          item.addEventListener('click', (e) => { e.stopPropagation(); openMediaModal(media.path, 'video'); });
+        } else {
+          const img = document.createElement('img');
+          img.src = media.path;
+          img.loading = 'lazy';
+          img.alt = media.name;
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+          img.onerror = function() { img.style.background='#fce4ec'; img.alt='Error'; };
+          inner.appendChild(img);
+          item.addEventListener('click', (e) => { e.stopPropagation(); openMediaModal(media.path, 'image'); });
+        }
+        item.appendChild(inner);
+        document.body.appendChild(item);
+      }, idx * 80);
+    });
+  } catch (err) {
+    console.error('Error cargando medios:', err);
+  }
+}
+
+function openMediaModal(src, type) {
+  const modal = document.createElement('div');
+  modal.className = 'media-modal';
+  const content = document.createElement('div');
+  content.className = 'media-modal-content';
+  if (type === 'video') {
+    const video = document.createElement('video');
+    video.src = src;
+    video.controls = true;
+    video.autoplay = true;
+    content.appendChild(video);
+  } else {
+    const img = document.createElement('img');
+    img.src = src;
+    content.appendChild(img);
+  }
+  modal.appendChild(content);
+  modal.addEventListener('click', () => {
+    modal.style.opacity = '0';
+    modal.style.transition = 'opacity 0.3s';
+    setTimeout(() => modal.remove(), 300);
+  });
+  document.body.appendChild(modal);
+}
+
+function openGift() {
+  const password = prompt('Ingresa la contraseña de tu cartita:');
+  if (password === '020426190709240110140126') {
+    const screenOpen = document.getElementById('screen-open');
+    const screenCarta = document.getElementById('screen-carta');
+    screenOpen.classList.add('fade-out');
+    setTimeout(() => {
+      screenOpen.classList.remove('active');
+      screenCarta.classList.add('active');
+      createConfetti();
+      setTimeout(loadMedia, 400);
+      setTimeout(() => document.querySelector('.letter-container').scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
+    }, 800);
+  } else if (password !== null) {
+    alert('Contraseña incorrecta. Intentalo de nuevo.');
+  }
+}
+
+const savedContent = localStorage.getItem('carta-juli-content');
+if (savedContent) LETTER_AREA.innerHTML = savedContent;
+
+LETTER_AREA.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    document.execCommand('insertLineBreak');
+  }
+});
+
+LETTER_AREA.addEventListener('input', () => {
+  try { localStorage.setItem('carta-juli-content', LETTER_AREA.innerHTML); } catch(e) {}
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && document.getElementById('screen-open').classList.contains('active')) {
+    openGift();
+  }
+});
+
+if (MODEL_VIEWER) {
+  MODEL_VIEWER.addEventListener('error', (e) => console.warn('Model viewer error:', e.detail));
+  MODEL_VIEWER.addEventListener('load', () => console.log('Modelo 3D cargado'));
+}
+
+window.addEventListener('load', () => {
+  createPixelRain();
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hidden');
+    setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500);
+  }, 1000);
+  const style = document.createElement('style');
+  style.textContent = '@keyframes fadeIn{from{opacity:0}to{opacity:1}}.media-item{animation:fadeIn 0.5s ease forwards;opacity:0;}';
+  document.head.appendChild(style);
+});
+
+console.log('Feliz Cumpleaños Julieth!');
+</script>
+</body>
+</html>
